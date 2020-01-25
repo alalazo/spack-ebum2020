@@ -36,6 +36,26 @@
             Massimiliano Culpo - Sylabs, Inc.
         </section>
 
+        <!-- Introduction to Sylabs -->
+        <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
+            <section>
+                <h3>Sylabs, Singularity and Spack</h3>
+                <img src="resources/singularity-logo.svg" width="40%" style="background: none; border: 0px">
+            </section>
+            
+            <!-- <section>
+                <h3>Singularity is designed for HPC</h3>
+                <ul>
+                    <li>Singularity Image Format (SIF)</li>
+                    <li>Native support for GPUs</li>
+                    <li>Compatible with all resource managers</li>
+                    <li>Images can be signed for verification</li>
+                    <li>Users are themselves inside the container</li>
+                </ul>
+                
+            </section> -->
+        </section>
+
         <!-- SPACK IN a nutshell -->
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
 
@@ -506,7 +526,7 @@ $ spack log-parse --show=errors,warnings $(spack location -i hdf5)/.spack/build.
                                 core2   westmere  ivybridge    broadwell  mic_knl  cannonlake      icelake
                             [...]
                     </code></pre>
-                    Host is detected as a best match among known microarchitectures
+                    Host detected as best match among known targets
                 </section>
                 <section>
                     <h4>Microarchitecture specific optimizations</h4>
@@ -523,18 +543,19 @@ $ spack log-parse --show=errors,warnings $(spack location -i hdf5)/.spack/build.
                         [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c -fPIC -O2 ztest30073.c
                         [...]
                     </code></pre>
-                    Optimization flags that are specific to the target microarchitecture are injected automatically
+                    Optimization flags injected automatically
                 </section>
                 <section>
                     <h4>The concretizer knows about compiler support</h4>
                     <pre><code class="shell" data-trim>
                             $ spack arch
-                            linux-ubuntu18.04-broadwell
+                            linux-ubuntu18.04-broadwell                
                             
                             $ spack spec zlib %gcc@4.8
                             [...]
                             Concretized
                             --------------------------------
+                            ==> Warning: gcc@4.8 cannot build optimized binaries for "broadwell". Using best target possible: "haswell"
                             zlib@1.2.11%gcc@4.8+optimize+pic+shared arch=linux-ubuntu18.04-haswell
                             
                             $ spack spec zlib %gcc@4.8 target=broadwell
@@ -544,7 +565,7 @@ $ spack log-parse --show=errors,warnings $(spack location -i hdf5)/.spack/build.
                     Downgrades the architecture if the compiler is too old or errors out on explicit request
                 </section>
                 <section>
-                    <h4>Broader range of tests for targets in recipes</h4>
+                    <h4>Simplified recipes with more powerful tests</h4>
                     <pre><code class="python" data-trim>
         # The colon denotes an open range. The dependency
         # is attached to any x86_64 compatible target
@@ -846,7 +867,11 @@ EOF
                 <h3>Other notable features added to Spack</h3>
             </section>
             <section>
-                <h4>Spack supports parallel builds</h4>
+                <h4>Spack supports concurrent or parallel builds</h4>
+                <div>
+                    <img src="resources/DistBuildFlow-v0.6.1.png" width="70%" height="70%"
+                         style="background: none; border: 0">
+                </div>
             </section>
             <section>
                 <h4>Chain instances to read upstream databases</h4>
