@@ -482,107 +482,22 @@ $ spack log-parse --show=errors,warnings $(spack location -i hdf5)/.spack/build.
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">    
                 <h2>New features since last year</h2>
         </section>
-            
+
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
-                <section>
-                    <h3>Spack can optimize for specific microarchitectures</h3>
-                </section>
-                <section>
-                    <h4>Spack 0.12.X: support was coarse grained</h4>
-                    <pre><code class="shell" data-trim>
-    $ # Based on platform.machine() which is basically uname -m
-    $ spack arch
-    linux-ubuntu18.04-x86_64
-    
-    $ spack -d install zlib
-    [...]
-    ==> [2019-09-26-12:52:54.178762] Successfully installed zlib
-    Fetch: 0.01s.  Build: 3.87s.  Total: 3.88s.
-    [+] /home/culpo/PycharmProjects/spack/opt/spack/linux-ubuntu18.04-x86_64/gcc-9.0.1/zlib-1.2.11-tn4qvs7g6r45dipq6kvg4ggs6rts3m7s
-    
-    $ cat spack-cc-zlib-tn4qvs7.out.log
-    [cc] /usr/bin/gcc-9 -c ztest28029.c
-    [cc] /usr/bin/gcc-9 -c -fPIC -O2 ztest28029.c
-    [cc] /usr/bin/gcc-9 -c -fPIC -O2 ztest28029.c
-    [...]
-                    </code></pre>
-                    No architecture specific optimization is injected
-                </section>
-                <section>
-                    <h4>Spack >= 0.13.X: finer notion of architectures</h4>
-                    <pre><code class="shell" data-trim>
-                            $ spack arch
-                            linux-ubuntu18.04-broadwell
-    
-                            $ spack arch --known-targets
-                            Generic architectures (families)
-                                aarch64  ppc64  ppc64le  x86  x86_64
-                            
-                            IBM - ppc64
-                                power7  power8  power9
-                            
-                            GenuineIntel - x86_64
-                                nocona  nehalem   sandybridge  haswell    skylake  skylake_avx512  cascadelake
-                                core2   westmere  ivybridge    broadwell  mic_knl  cannonlake      icelake
-                            [...]
-                    </code></pre>
-                    Host detected as best match among known targets
-                </section>
-                <section>
-                    <h4>Microarchitecture specific optimizations</h4>
-                    <pre><code class="shell" data-trim>
-                        $ spack -d install zlib
-                        [...]
-                        ==> [2019-09-26-13:57:08.721455] Successfully installed zlib
-                        Fetch: 0.01s.  Build: 3.22s.  Total: 3.23s.
-                        [+] /home/culpo/PycharmProjects/spack/opt/spack/linux-ubuntu18.04-broadwell/gcc-9.0.1/zlib-1.2.11-os3djb57dqdzhaqsl2n7iefz3gwombyi
-    
-                        $ cat spack-cc-zlib-os3djb5.out.log
-                        [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c ztest30073.c
-                        [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c -fPIC -O2 ztest30073.c
-                        [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c -fPIC -O2 ztest30073.c
-                        [...]
-                    </code></pre>
-                    Optimization flags injected automatically
-                </section>
-                <section>
-                    <h4>The concretizer knows about compiler support</h4>
-                    <pre><code class="shell" data-trim>
-                            $ spack arch
-                            linux-ubuntu18.04-broadwell                
-                            
-                            $ spack spec zlib %gcc@4.8
-                            [...]
-                            Concretized
-                            --------------------------------
-                            ==> Warning: gcc@4.8 cannot build optimized binaries for "broadwell". Using best target possible: "haswell"
-                            zlib@1.2.11%gcc@4.8+optimize+pic+shared arch=linux-ubuntu18.04-haswell
-                            
-                            $ spack spec zlib %gcc@4.8 target=broadwell
-                            [...]
-                            ==> Error: cannot produce optimized binary for micro-architecture 'broadwell' with gcc@4.8 [supported compiler versions are 4.9:]
-                    </code></pre>
-                    Downgrades the architecture if the compiler is too old or errors out on explicit request
-                </section>
-                <section>
-                    <h4>Simplified recipes with more powerful tests</h4>
-                    <pre><code class="python" data-trim>
-        # The colon denotes an open range. The dependency
-        # is attached to any x86_64 compatible target
-        depends_on('libfoo', when='target=x86_64:')
-    
-        # In recipes we can use Microarchitecture objects
-        # directly and test them for compatibility or features
-        if spec.target >= 'broadwell':
-            config_args.append('--from-broadwell-on')
-    
-        if 'avx512' in spec.target:
-            config_args.append('--enable-avx512')
-                    </code></pre>
-                </section>
-    
+            <section>
+                <h3>Chain together multiple instances of Spack</h3>
+            </section>
+            <section>
+                <h4>Downstream instances can read upstream DBs</h4>
+                <div>
+                    <img src="resources/spack-chains.svg" width="70%" height="70%"
+                         style="background: none; border: 0">
+                </div>
+                It's Spack all the way down!
+            </section>
+
         </section>
-        
+                    
         <!-- Spack environments -->
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
             <section>
@@ -630,7 +545,7 @@ $ spack find
                 Like Python's <code>virtualenvs</code> but for anything!
             </section>
 
-            <section>
+            <!-- <section>
                 <h4>Environments use what's available in the store</h4>
                 <pre><code class="shell" data-trim>
 $ spack find
@@ -670,7 +585,7 @@ $ spack install
 [...]
                 </code></pre>
 Abstract user requests are always tracked
-            </section>
+            </section> -->
 
             <section>
                 <h4>All environments are based on a manifest file</h4>
@@ -777,6 +692,105 @@ H5Cpublic.h      ...   zlib.h
         
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
             <section>
+                <h3>Spack can optimize for specific microarchitectures</h3>
+            </section>
+            <section>
+                <h4>Spack 0.12.X: support was coarse grained</h4>
+                <pre><code class="shell" data-trim>
+$ # Based on platform.machine() which is basically uname -m
+$ spack arch
+linux-ubuntu18.04-x86_64
+
+$ spack -d install zlib
+[...]
+==> [2019-09-26-12:52:54.178762] Successfully installed zlib
+Fetch: 0.01s.  Build: 3.87s.  Total: 3.88s.
+[+] /home/culpo/PycharmProjects/spack/opt/spack/linux-ubuntu18.04-x86_64/gcc-9.0.1/zlib-1.2.11-tn4qvs7g6r45dipq6kvg4ggs6rts3m7s
+
+$ cat spack-cc-zlib-tn4qvs7.out.log
+[cc] /usr/bin/gcc-9 -c ztest28029.c
+[cc] /usr/bin/gcc-9 -c -fPIC -O2 ztest28029.c
+[cc] /usr/bin/gcc-9 -c -fPIC -O2 ztest28029.c
+[...]
+                </code></pre>
+                No architecture specific optimization is injected
+            </section>
+            <section>
+                <h4>Spack >= 0.13.X: finer notion of architectures</h4>
+                <pre><code class="shell" data-trim>
+                        $ spack arch
+                        linux-ubuntu18.04-broadwell
+
+                        $ spack arch --known-targets
+                        Generic architectures (families)
+                            aarch64  ppc64  ppc64le  x86  x86_64
+                        
+                        IBM - ppc64
+                            power7  power8  power9
+                        
+                        GenuineIntel - x86_64
+                            nocona  nehalem   sandybridge  haswell    skylake  skylake_avx512  cascadelake
+                            core2   westmere  ivybridge    broadwell  mic_knl  cannonlake      icelake
+                        [...]
+                </code></pre>
+                Host detected as best match among known targets
+            </section>
+            <section>
+                <h4>Microarchitecture specific optimizations</h4>
+                <pre><code class="shell" data-trim>
+                    $ spack -d install zlib
+                    [...]
+                    ==> [2019-09-26-13:57:08.721455] Successfully installed zlib
+                    Fetch: 0.01s.  Build: 3.22s.  Total: 3.23s.
+                    [+] /home/culpo/PycharmProjects/spack/opt/spack/linux-ubuntu18.04-broadwell/gcc-9.0.1/zlib-1.2.11-os3djb57dqdzhaqsl2n7iefz3gwombyi
+
+                    $ cat spack-cc-zlib-os3djb5.out.log
+                    [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c ztest30073.c
+                    [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c -fPIC -O2 ztest30073.c
+                    [cc] /usr/bin/gcc-9 -march=broadwell -mtune=broadwell -c -fPIC -O2 ztest30073.c
+                    [...]
+                </code></pre>
+                Optimization flags injected automatically
+            </section>
+            <section>
+                <h4>The concretizer knows about compiler support</h4>
+                <pre><code class="shell" data-trim>
+                        $ spack arch
+                        linux-ubuntu18.04-broadwell                
+                        
+                        $ spack spec zlib %gcc@4.8
+                        [...]
+                        Concretized
+                        --------------------------------
+                        ==> Warning: gcc@4.8 cannot build optimized binaries for "broadwell". Using best target possible: "haswell"
+                        zlib@1.2.11%gcc@4.8+optimize+pic+shared arch=linux-ubuntu18.04-haswell
+                        
+                        $ spack spec zlib %gcc@4.8 target=broadwell
+                        [...]
+                        ==> Error: cannot produce optimized binary for micro-architecture 'broadwell' with gcc@4.8 [supported compiler versions are 4.9:]
+                </code></pre>
+                Downgrades the architecture if the compiler is too old or errors out on explicit request
+            </section>
+            <section>
+                <h4>Simplified recipes with more powerful tests</h4>
+                <pre><code class="python" data-trim>
+    # The colon denotes an open range. The dependency
+    # is attached to any x86_64 compatible target
+    depends_on('libfoo', when='target=x86_64:')
+
+    # In recipes we can use Microarchitecture objects
+    # directly and test them for compatibility or features
+    if spec.target >= 'broadwell':
+        config_args.append('--from-broadwell-on')
+
+    if 'avx512' in spec.target:
+        config_args.append('--enable-avx512')
+                </code></pre>
+            </section>
+        </section>
+
+        <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
+            <section>
                 <h3>Spack can generate recipes to build container images</h3>
             </section>
             <section>
@@ -864,24 +878,16 @@ EOF
 
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
             <section>
-                <h3>Other notable features added to Spack</h3>
-            </section>
-            <section>
-                <h4>Spack supports concurrent or parallel builds</h4>
-                <div>
-                    <img src="resources/DistBuildFlow-v0.6.1.png" width="70%" height="70%"
-                         style="background: none; border: 0">
-                </div>
-            </section>
-            <section>
-                <h4>Chain instances to read upstream databases</h4>
-                <div>
-                    <img src="resources/spack-chains.svg" width="70%" height="70%"
-                         style="background: none; border: 0">
-                </div>
-                It's Spack all the way down!
+                <h3>Spack supports concurrent or parallel builds</h3>
             </section>
 
+            <section>
+                <h4>Synchronization via filesystem locks</h4>
+                <div>
+                    <img src="resources/DistBuildFlow-v0.6.1.png" width="90%" height="90%"
+                         style="background: none; border: 0">
+                </div>
+            </section>
         </section>
 
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
