@@ -791,6 +791,19 @@ $ cat spack-cc-zlib-tn4qvs7.out.log
 
         <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
             <section>
+                <h3>Spack integrates with Gitlab CI pipelines</h3>
+            </section>
+            <section>
+                <h4>CI infrastructure for source and binary packages</h4>
+                <div>
+                    <img src="resources/ci_infrastructure.svg" height="100%" width="100%"
+                         style="background: none; border: 0">
+                </div>
+            </section>
+        </section>
+
+        <section data-background-image="resources/slide-background.svg" data-background-opacity="0.9">
+            <section>
                 <h3>Spack can generate recipes to build container images</h3>
             </section>
             <section>
@@ -872,7 +885,7 @@ EOF
   spack env activate --sh -d . >> /opt/spack-environment/environment_modifications.sh
 ...
                 </code></pre>
-                Currently needs <code>master</code> version of the software
+                Needs the upcoming 3.5.3 version of Singularity
             </section>            
         </section>
 
@@ -901,13 +914,6 @@ EOF
                          style="background: none; border: 0">
                 </div>
                 
-            </section>
-            <section>
-                <h4>CI infrastructure for source and binary packages</h4>
-                <div>
-                    <img src="resources/ci_infrastructure.svg" height="100%" width="100%"
-                         style="background: none; border: 0">
-                </div>
             </section>
         </section>
         <!-- Resources -->
